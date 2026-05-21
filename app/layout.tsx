@@ -8,12 +8,13 @@ export const metadata: Metadata = {
     "Automated SMS and email follow-ups that turn your customers into reviewers.",
 };
 
+const hasClerk = !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <ClerkProvider>
-      <html lang="en">
-        <body className="bg-white text-gray-900 antialiased">{children}</body>
-      </html>
-    </ClerkProvider>
+  const content = (
+    <html lang="en">
+      <body className="bg-white text-gray-900 antialiased">{children}</body>
+    </html>
   );
+  return hasClerk ? <ClerkProvider>{content}</ClerkProvider> : content;
 }
