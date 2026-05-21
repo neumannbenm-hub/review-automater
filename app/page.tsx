@@ -62,7 +62,7 @@ export default function LandingPage() {
           {[
             { value: "3.2×", label: "more reviews on average" },
             { value: "< 30s", label: "to set up a campaign" },
-            { value: "$0–15/mo", label: "infrastructure cost" },
+            { value: "14 days", label: "free trial, no card needed" },
           ].map(({ value, label }) => (
             <div key={label}>
               <p className="text-3xl font-bold text-gray-900">{value}</p>
