@@ -1,10 +1,7 @@
 import Link from "next/link";
-import { auth } from "@clerk/nextjs/server";
 import { PLANS } from "@/lib/plans";
 
-export default async function LandingPage() {
-  const { userId } = await auth();
-
+export default function LandingPage() {
   return (
     <div className="min-h-screen">
       {/* Nav */}
@@ -14,26 +11,15 @@ export default async function LandingPage() {
             Review<span className="text-brand-600">Automater</span>
           </span>
           <div className="flex items-center gap-4">
-            {userId ? (
-              <Link
-                href="/dashboard"
-                className="bg-brand-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-brand-700 transition-colors"
-              >
-                Dashboard →
-              </Link>
-            ) : (
-              <>
-                <Link href="/sign-in" className="text-sm text-gray-600 hover:text-gray-900">
-                  Sign in
-                </Link>
-                <Link
-                  href="/sign-up"
-                  className="bg-brand-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-brand-700 transition-colors"
-                >
-                  Get started free
-                </Link>
-              </>
-            )}
+            <Link href="/sign-in" className="text-sm text-gray-600 hover:text-gray-900">
+              Sign in
+            </Link>
+            <Link
+              href="/sign-up"
+              className="bg-brand-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-brand-700 transition-colors"
+            >
+              Get started free
+            </Link>
           </div>
         </div>
       </nav>
@@ -129,36 +115,12 @@ export default async function LandingPage() {
           </h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
-              {
-                icon: "💬",
-                title: "SMS via Twilio",
-                body: "High open rates. Messages feel personal. Only ~$0.008/text.",
-              },
-              {
-                icon: "📧",
-                title: "Email via SendGrid",
-                body: "Beautiful HTML emails with your brand color. Free up to 100/day.",
-              },
-              {
-                icon: "📷",
-                title: "QR codes",
-                body: "Perfect for in-store. Print once, scan forever. Tracked clicks included.",
-              },
-              {
-                icon: "⏱️",
-                title: "Timed sequences",
-                body: "Set up multi-step campaigns — Day 0 SMS, Day 3 email, Day 7 nudge.",
-              },
-              {
-                icon: "🛑",
-                title: "Smart stop",
-                body: "The moment a customer clicks your review link, the sequence stops automatically.",
-              },
-              {
-                icon: "📊",
-                title: "Click analytics",
-                body: "See click rates and conversions per campaign, per location.",
-              },
+              { icon: "💬", title: "SMS via Twilio", body: "High open rates. Messages feel personal. Only ~$0.008/text." },
+              { icon: "📧", title: "Email via SendGrid", body: "Beautiful HTML emails with your brand color. Free up to 100/day." },
+              { icon: "📷", title: "QR codes", body: "Perfect for in-store. Print once, scan forever. Tracked clicks included." },
+              { icon: "⏱️", title: "Timed sequences", body: "Set up multi-step campaigns — Day 0 SMS, Day 3 email, Day 7 nudge." },
+              { icon: "🛑", title: "Smart stop", body: "The moment a customer clicks your review link, the sequence stops automatically." },
+              { icon: "📊", title: "Click analytics", body: "See click rates and conversions per campaign, per location." },
             ].map(({ icon, title, body }) => (
               <div key={title} className="bg-white rounded-2xl p-6 border border-gray-100">
                 <div className="text-3xl mb-3">{icon}</div>

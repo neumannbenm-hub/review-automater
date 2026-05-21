@@ -1,17 +1,14 @@
-import { auth } from "@clerk/nextjs/server";
 import { listEnrollments, listCampaigns, type Enrollment } from "@/lib/api";
 import { EnrollForm } from "./EnrollForm";
 
 export default async function EnrollmentsPage() {
-  const { userId } = await auth();
-
   let enrollments: Enrollment[] = [];
   let campaigns: Awaited<ReturnType<typeof listCampaigns>> = [];
 
   try {
     const [enResult, cResult] = await Promise.all([
-      listEnrollments(userId!),
-      listCampaigns(userId!),
+      listEnrollments("preview"),
+      listCampaigns("preview"),
     ]);
     enrollments = enResult.enrollments;
     campaigns = cResult;
@@ -60,9 +57,7 @@ export default async function EnrollmentsPage() {
                   <tr key={e.id} className="hover:bg-gray-50/50">
                     <td className="px-5 py-3">
                       <p className="font-medium text-gray-900">{e.contact.name}</p>
-                      <p className="text-xs text-gray-400">
-                        {e.contact.phone ?? e.contact.email}
-                      </p>
+                      <p className="text-xs text-gray-400">{e.contact.phone ?? e.contact.email}</p>
                     </td>
                     <td className="px-5 py-3 capitalize text-gray-500">{e.platform}</td>
                     <td className="px-5 py-3">
@@ -73,9 +68,7 @@ export default async function EnrollmentsPage() {
                             style={{ width: `${(sent / total) * 100}%` }}
                           />
                         </div>
-                        <span className="text-xs text-gray-400">
-                          {sent}/{total}
-                        </span>
+                        <span className="text-xs text-gray-400">{sent}/{total}</span>
                       </div>
                     </td>
                     <td className="px-5 py-3">
