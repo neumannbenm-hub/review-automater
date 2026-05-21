@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { stripe } from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 import { clerkClient } from "@clerk/nextjs/server";
 import { getPlanByPriceId } from "@/lib/plans";
 import type Stripe from "stripe";
@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
 
   let event: Stripe.Event;
   try {
-    event = stripe.webhooks.constructEvent(
+    event = getStripe().webhooks.constructEvent(
       body,
       sig,
       process.env.STRIPE_WEBHOOK_SECRET!
@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
       if (!userId) break;
 
       const subscriptionId = session.subscription as string;
-      const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+      const subscription = await getStripe().subscriptions.retrieve(subscriptionId);
       const priceId = subscription.items.data[0]?.price.id;
       const plan = priceId ? getPlanByPriceId(priceId) : undefined;
 

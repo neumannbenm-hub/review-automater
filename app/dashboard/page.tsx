@@ -1,36 +1,12 @@
-import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
-import { listLinks, listEnrollments } from "@/lib/api";
 
-export default async function DashboardPage() {
-  const { userId } = await auth();
-
-  let links: Awaited<ReturnType<typeof listLinks>> | null = null;
-  let enrollments: Awaited<ReturnType<typeof listEnrollments>> | null = null;
-
-  try {
-    [links, enrollments] = await Promise.all([
-      listLinks(userId!),
-      listEnrollments(userId!),
-    ]);
-  } catch {
-    // API may not be running yet — show empty state
-  }
-
-  const totalSent = links?.total ?? 0;
-  const totalClicks = links?.links.reduce((sum, l) => sum + l.clicks, 0) ?? 0;
-  const clickRate = totalSent > 0 ? Math.round((totalClicks / totalSent) * 100) : 0;
-  const converted = enrollments?.enrollments.filter((e) => e.converted).length ?? 0;
-  const activeEnrollments = enrollments?.enrollments.filter((e) => e.status === "active").length ?? 0;
-
+export default function DashboardPage() {
   const stats = [
-    { label: "Requests sent", value: totalSent },
-    { label: "Total clicks", value: totalClicks },
-    { label: "Click rate", value: `${clickRate}%` },
-    { label: "Converted", value: converted },
+    { label: "Requests sent", value: 0 },
+    { label: "Total clicks", value: 0 },
+    { label: "Click rate", value: "0%" },
+    { label: "Converted", value: 0 },
   ];
-
-  const recent = enrollments?.enrollments.slice(0, 5) ?? [];
 
   return (
     <div>
@@ -69,7 +45,7 @@ export default async function DashboardPage() {
           {
             href: "/dashboard/enrollments",
             title: "View enrollments",
-            desc: `${activeEnrollments} active right now`,
+            desc: "0 active right now",
             color: "bg-purple-50 hover:bg-purple-100",
             textColor: "text-purple-700",
           },
@@ -93,59 +69,14 @@ export default async function DashboardPage() {
             View all →
           </Link>
         </div>
-        {recent.length === 0 ? (
-          <div className="px-6 py-12 text-center text-gray-400 text-sm">
-            No enrollments yet.{" "}
-            <Link href="/dashboard/campaigns" className="text-brand-600 hover:underline">
-              Create a campaign
-            </Link>{" "}
-            to get started.
-          </div>
-        ) : (
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="bg-gray-50 text-left">
-                <th className="px-6 py-3 text-gray-500 font-medium">Customer</th>
-                <th className="px-6 py-3 text-gray-500 font-medium">Platform</th>
-                <th className="px-6 py-3 text-gray-500 font-medium">Status</th>
-                <th className="px-6 py-3 text-gray-500 font-medium">Converted</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {recent.map((e) => (
-                <tr key={e.id} className="hover:bg-gray-50/50">
-                  <td className="px-6 py-3 font-medium text-gray-900">{e.contact.name}</td>
-                  <td className="px-6 py-3 text-gray-500 capitalize">{e.platform}</td>
-                  <td className="px-6 py-3">
-                    <StatusBadge status={e.status} />
-                  </td>
-                  <td className="px-6 py-3">
-                    {e.converted ? (
-                      <span className="text-green-600 font-medium">✓ Yes</span>
-                    ) : (
-                      <span className="text-gray-400">—</span>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+        <div className="px-6 py-12 text-center text-gray-400 text-sm">
+          No enrollments yet.{" "}
+          <Link href="/dashboard/campaigns" className="text-brand-600 hover:underline">
+            Create a campaign
+          </Link>{" "}
+          to get started.
+        </div>
       </div>
     </div>
-  );
-}
-
-function StatusBadge({ status }: { status: string }) {
-  const styles: Record<string, string> = {
-    active: "bg-green-50 text-green-700",
-    completed: "bg-blue-50 text-blue-700",
-    stopped: "bg-gray-100 text-gray-500",
-    unsubscribed: "bg-red-50 text-red-600",
-  };
-  return (
-    <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium capitalize ${styles[status] ?? "bg-gray-100 text-gray-500"}`}>
-      {status}
-    </span>
   );
 }

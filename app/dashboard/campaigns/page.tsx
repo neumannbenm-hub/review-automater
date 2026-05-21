@@ -1,14 +1,12 @@
-import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
-import { listCampaigns } from "@/lib/api";
 import { DeleteCampaignButton } from "./DeleteCampaignButton";
+import { listCampaigns } from "@/lib/api";
 
 export default async function CampaignsPage() {
-  const { userId } = await auth();
   let campaigns: Awaited<ReturnType<typeof listCampaigns>> = [];
 
   try {
-    campaigns = await listCampaigns(userId!);
+    campaigns = await listCampaigns("preview");
   } catch {
     // API not running — show empty state
   }
@@ -58,8 +56,6 @@ export default async function CampaignsPage() {
                 </div>
                 <DeleteCampaignButton id={c.id} />
               </div>
-
-              {/* Steps preview */}
               <div className="mt-4 flex flex-wrap gap-2">
                 {c.steps.map((step) => (
                   <div
