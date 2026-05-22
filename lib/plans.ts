@@ -6,37 +6,30 @@ export interface Plan {
   requestsPerMonth: number;
   campaigns: number; // -1 = unlimited
   features: string[];
+  pricePerExtraRequest: number; // in dollars
 }
+
+// Extra requests are purchased in packs; unit price = EXTRA_REQUESTS_PACK_PRICE / EXTRA_REQUESTS_PACK_SIZE
+export const EXTRA_REQUESTS_PACK_SIZE = 100;
+export const EXTRA_REQUESTS_PACK_PRICE = 10; // $10 for 100 requests = $0.10 each
+export const FREE_TRIAL_REQUESTS = 50;
 
 export const PLANS: Plan[] = [
   {
-    id: "starter",
-    name: "Starter",
-    price: 29,
-    priceId: process.env.STRIPE_STARTER_PRICE_ID ?? "",
+    id: "standard",
+    name: "Standard",
+    price: 49,
+    priceId: process.env.STRIPE_STANDARD_PRICE_ID ?? "",
     requestsPerMonth: 500,
-    campaigns: 3,
+    campaigns: -1,
+    pricePerExtraRequest: 0.10,
     features: [
       "500 review requests / mo",
-      "3 campaigns",
-      "SMS + Email + QR",
-      "Click tracking",
-      "Email support",
-    ],
-  },
-  {
-    id: "pro",
-    name: "Pro",
-    price: 79,
-    priceId: process.env.STRIPE_PRO_PRICE_ID ?? "",
-    requestsPerMonth: 2000,
-    campaigns: -1,
-    features: [
-      "2,000 review requests / mo",
       "Unlimited campaigns",
       "SMS + Email + QR",
       "Click tracking & analytics",
-      "Priority support",
+      "$0.10 per extra request",
+      "Email support",
     ],
   },
 ];

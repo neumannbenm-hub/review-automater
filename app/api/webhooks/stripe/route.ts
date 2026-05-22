@@ -28,6 +28,19 @@ export async function POST(req: NextRequest) {
       const userId = session.metadata?.userId ?? session.client_reference_id;
       if (!userId) break;
 
+      if (session.metadata?.type === "extra_requests") {
+        const packSize = parseInt(session.metadata.packSize ?? "100", 10);
+        const user = await clerk.users.getUser(userId);
+        const current = ((user.privateMetadata as Record<string, unknown>)?.extraRequests as number) ?? 0;
+        await clerk.users.updateUserMetadata(userId, {
+          privateMetadata: {
+            ...(user.privateMetadata as object),
+            extraRequests: current + packSize,
+          },
+        });
+        break;
+      }
+
       const subscriptionId = session.subscription as string;
       const subscription = await stripe.subscriptions.retrieve(subscriptionId);
       const priceId = subscription.items.data[0]?.price.id;
@@ -37,7 +50,7 @@ export async function POST(req: NextRequest) {
         privateMetadata: {
           stripeCustomerId: session.customer as string,
           stripeSubscriptionId: subscriptionId,
-          stripePlan: plan?.id ?? "starter",
+          stripePlan: plan?.id ?? "standard",
         },
       });
       break;
