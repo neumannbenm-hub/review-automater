@@ -10,7 +10,7 @@ export function DeleteCampaignButton({ id }: { id: string }) {
     <button
       onClick={() => {
         if (!confirm("Delete this campaign?")) return;
-        startTransition(() => deleteCampaignAction(id));
+        startTransition(() => void deleteCampaignAction(id));
       }}
       disabled={isPending}
       className="text-xs text-gray-400 hover:text-red-500 transition-colors disabled:opacity-50 flex-shrink-0"
