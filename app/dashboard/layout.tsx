@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { UserButton } from "@clerk/nextjs";
 
 const NAV = [
   { href: "/dashboard", label: "Overview", icon: "▦" },
@@ -34,10 +33,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </Link>
           ))}
         </nav>
-
-        <div className="h-16 px-5 flex items-center border-t border-gray-100">
-          <UserButton afterSignOutUrl="/" />
-        </div>
       </aside>
 
       {/* Main */}

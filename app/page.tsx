@@ -1,10 +1,7 @@
 import Link from "next/link";
-import { auth } from "@clerk/nextjs/server";
 import { PLANS } from "@/lib/plans";
 
-export default async function LandingPage() {
-  const { userId } = await auth();
-
+export default function LandingPage() {
   return (
     <div className="min-h-screen">
       {/* Nav */}
@@ -14,26 +11,12 @@ export default async function LandingPage() {
             Review<span className="text-brand-600">Automater</span>
           </span>
           <div className="flex items-center gap-4">
-            {userId ? (
-              <Link
-                href="/dashboard"
-                className="bg-brand-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-brand-700 transition-colors"
-              >
-                Dashboard →
-              </Link>
-            ) : (
-              <>
-                <Link href="/sign-in" className="text-sm text-gray-600 hover:text-gray-900">
-                  Sign in
-                </Link>
-                <Link
-                  href="/sign-up"
-                  className="bg-brand-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-brand-700 transition-colors"
-                >
-                  Get started free
-                </Link>
-              </>
-            )}
+            <Link
+              href="/dashboard"
+              className="bg-brand-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-brand-700 transition-colors"
+            >
+              Dashboard →
+            </Link>
           </div>
         </div>
       </nav>
@@ -55,10 +38,10 @@ export default async function LandingPage() {
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link
-            href="/sign-up"
+            href="/dashboard"
             className="bg-brand-600 text-white px-8 py-3.5 rounded-xl text-base font-semibold hover:bg-brand-700 transition-colors shadow-lg shadow-brand-100"
           >
-            Start free trial
+            Go to Dashboard
           </Link>
           <a
             href="#how-it-works"
@@ -67,7 +50,6 @@ export default async function LandingPage() {
             See how it works
           </a>
         </div>
-        <p className="mt-4 text-sm text-gray-400">No credit card required · 14-day free trial</p>
       </section>
 
       {/* Stats bar */}
@@ -221,14 +203,14 @@ export default async function LandingPage() {
                 ))}
               </ul>
               <Link
-                href="/sign-up"
+                href="/dashboard"
                 className={`block text-center py-3 rounded-xl font-semibold text-sm transition-colors ${
                   i === 1
                     ? "bg-white text-brand-600 hover:bg-brand-50"
                     : "bg-brand-600 text-white hover:bg-brand-700"
                 }`}
               >
-                Start free trial
+                Get started
               </Link>
             </div>
           ))}
@@ -245,7 +227,7 @@ export default async function LandingPage() {
             Join hundreds of local businesses automating their review collection.
           </p>
           <Link
-            href="/sign-up"
+            href="/dashboard"
             className="inline-block bg-white text-brand-600 px-8 py-3.5 rounded-xl font-semibold hover:bg-brand-50 transition-colors"
           >
             Get started free

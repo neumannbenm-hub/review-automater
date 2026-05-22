@@ -1,17 +1,16 @@
-import { auth } from "@clerk/nextjs/server";
 import { listEnrollments, listCampaigns, type Enrollment } from "@/lib/api";
 import { EnrollForm } from "./EnrollForm";
 
-export default async function EnrollmentsPage() {
-  const { userId } = await auth();
+const BUSINESS_ID = process.env.BUSINESS_ID ?? "default";
 
+export default async function EnrollmentsPage() {
   let enrollments: Enrollment[] = [];
   let campaigns: Awaited<ReturnType<typeof listCampaigns>> = [];
 
   try {
     const [enResult, cResult] = await Promise.all([
-      listEnrollments(userId!),
-      listCampaigns(userId!),
+      listEnrollments(BUSINESS_ID),
+      listCampaigns(BUSINESS_ID),
     ]);
     enrollments = enResult.enrollments;
     campaigns = cResult;

@@ -1,17 +1,16 @@
-import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { listLinks, listEnrollments } from "@/lib/api";
 
-export default async function DashboardPage() {
-  const { userId } = await auth();
+const BUSINESS_ID = process.env.BUSINESS_ID ?? "default";
 
+export default async function DashboardPage() {
   let links: Awaited<ReturnType<typeof listLinks>> | null = null;
   let enrollments: Awaited<ReturnType<typeof listEnrollments>> | null = null;
 
   try {
     [links, enrollments] = await Promise.all([
-      listLinks(userId!),
-      listEnrollments(userId!),
+      listLinks(BUSINESS_ID),
+      listEnrollments(BUSINESS_ID),
     ]);
   } catch {
     // API may not be running yet — show empty state

@@ -1,14 +1,14 @@
-import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { listCampaigns } from "@/lib/api";
 import { DeleteCampaignButton } from "./DeleteCampaignButton";
 
+const BUSINESS_ID = process.env.BUSINESS_ID ?? "default";
+
 export default async function CampaignsPage() {
-  const { userId } = await auth();
   let campaigns: Awaited<ReturnType<typeof listCampaigns>> = [];
 
   try {
-    campaigns = await listCampaigns(userId!);
+    campaigns = await listCampaigns(BUSINESS_ID);
   } catch {
     // API not running — show empty state
   }
