@@ -1,7 +1,7 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
-import { getPlanByPriceId } from "@/lib/plans";
+import { getPlanByPriceId, getAddOnByPriceId } from "@/lib/plans";
 
 export async function POST(req: NextRequest) {
   const { userId } = await auth();
@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
   const body = await req.formData();
   const priceId = body.get("priceId") as string;
 
-  if (!priceId || !getPlanByPriceId(priceId)) {
+  if (!priceId || (!getPlanByPriceId(priceId) && !getAddOnByPriceId(priceId))) {
     return NextResponse.json({ error: "Invalid price" }, { status: 400 });
   }
 

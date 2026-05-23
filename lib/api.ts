@@ -23,7 +23,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 // ── Types ────────────────────────────────────────────────────────────────
 
 export type Platform = "google" | "yelp" | "facebook" | "tripadvisor" | "custom";
-export type Method = "sms" | "email" | "qr";
+export type Method = "sms" | "email" | "qr" | "letter";
 
 export interface ReviewLink {
   code: string;
@@ -113,7 +113,18 @@ interface SendQrPayload {
   businessId?: string;
 }
 
-export type SendRequestPayload = SendSmsPayload | SendEmailPayload | SendQrPayload;
+interface SendLetterPayload {
+  method: "letter";
+  name: string;
+  address: string;
+  business: string;
+  platform: Platform;
+  destinationUrl: string;
+  businessId?: string;
+  letterBody?: string;
+}
+
+export type SendRequestPayload = SendSmsPayload | SendEmailPayload | SendQrPayload | SendLetterPayload;
 
 export interface SendRequestResponse {
   success: boolean;

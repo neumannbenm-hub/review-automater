@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { clerkClient } from "@clerk/nextjs/server";
-import { getPlanByPriceId } from "@/lib/plans";
+import { getPlanByPriceId, getAddOnByPriceId } from "@/lib/plans";
 import type Stripe from "stripe";
 
 export async function POST(req: NextRequest) {
@@ -32,14 +32,25 @@ export async function POST(req: NextRequest) {
       const subscription = await stripe.subscriptions.retrieve(subscriptionId);
       const priceId = subscription.items.data[0]?.price.id;
       const plan = priceId ? getPlanByPriceId(priceId) : undefined;
+      const addOn = priceId ? getAddOnByPriceId(priceId) : undefined;
 
-      await clerk.users.updateUserMetadata(userId, {
-        privateMetadata: {
-          stripeCustomerId: session.customer as string,
-          stripeSubscriptionId: subscriptionId,
-          stripePlan: plan?.id ?? "starter",
-        },
-      });
+      if (addOn) {
+        await clerk.users.updateUserMetadata(userId, {
+          privateMetadata: {
+            stripeCustomerId: session.customer as string,
+            [`${addOn.metadataKey}SubscriptionId`]: subscriptionId,
+            [addOn.metadataKey]: true,
+          },
+        });
+      } else {
+        await clerk.users.updateUserMetadata(userId, {
+          privateMetadata: {
+            stripeCustomerId: session.customer as string,
+            stripeSubscriptionId: subscriptionId,
+            stripePlan: plan?.id ?? "starter",
+          },
+        });
+      }
       break;
     }
 
@@ -47,7 +58,6 @@ export async function POST(req: NextRequest) {
       const sub = event.data.object as Stripe.Subscription;
       const customerId = sub.customer as string;
 
-      // Find Clerk user by stripeCustomerId stored in private metadata
       const { data: users } = await clerk.users.getUserList({ limit: 500 });
       const user = users.find(
         (u) => (u.privateMetadata as Record<string, unknown>)?.stripeCustomerId === customerId
@@ -56,15 +66,26 @@ export async function POST(req: NextRequest) {
 
       const priceId = sub.items.data[0]?.price.id;
       const plan = priceId ? getPlanByPriceId(priceId) : undefined;
+      const addOn = priceId ? getAddOnByPriceId(priceId) : undefined;
       const isActive = sub.status === "active" || sub.status === "trialing";
 
-      await clerk.users.updateUserMetadata(user.id, {
-        privateMetadata: {
-          ...(user.privateMetadata as object),
-          stripeSubscriptionId: isActive ? sub.id : null,
-          stripePlan: isActive ? (plan?.id ?? null) : null,
-        },
-      });
+      if (addOn) {
+        await clerk.users.updateUserMetadata(user.id, {
+          privateMetadata: {
+            ...(user.privateMetadata as object),
+            [`${addOn.metadataKey}SubscriptionId`]: isActive ? sub.id : null,
+            [addOn.metadataKey]: isActive,
+          },
+        });
+      } else {
+        await clerk.users.updateUserMetadata(user.id, {
+          privateMetadata: {
+            ...(user.privateMetadata as object),
+            stripeSubscriptionId: isActive ? sub.id : null,
+            stripePlan: isActive ? (plan?.id ?? null) : null,
+          },
+        });
+      }
       break;
     }
 
@@ -78,13 +99,27 @@ export async function POST(req: NextRequest) {
       );
       if (!user) break;
 
-      await clerk.users.updateUserMetadata(user.id, {
-        privateMetadata: {
-          ...(user.privateMetadata as object),
-          stripeSubscriptionId: null,
-          stripePlan: null,
-        },
-      });
+      const meta = user.privateMetadata as Record<string, unknown>;
+      const priceId = sub.items.data[0]?.price.id;
+      const addOn = priceId ? getAddOnByPriceId(priceId) : undefined;
+
+      if (addOn) {
+        await clerk.users.updateUserMetadata(user.id, {
+          privateMetadata: {
+            ...meta,
+            [`${addOn.metadataKey}SubscriptionId`]: null,
+            [addOn.metadataKey]: false,
+          },
+        });
+      } else if (meta.stripeSubscriptionId === sub.id) {
+        await clerk.users.updateUserMetadata(user.id, {
+          privateMetadata: {
+            ...meta,
+            stripeSubscriptionId: null,
+            stripePlan: null,
+          },
+        });
+      }
       break;
     }
   }

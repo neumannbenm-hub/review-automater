@@ -8,6 +8,15 @@ export interface Plan {
   features: string[];
 }
 
+export interface AddOn {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  priceId: string;
+  metadataKey: string;
+}
+
 export const PLANS: Plan[] = [
   {
     id: "starter",
@@ -41,10 +50,25 @@ export const PLANS: Plan[] = [
   },
 ];
 
+export const ADD_ONS: AddOn[] = [
+  {
+    id: "letter",
+    name: "Letter",
+    description: "Send a physical letter as a campaign step.",
+    price: 3,
+    priceId: process.env.STRIPE_LETTER_ADDON_PRICE_ID ?? "",
+    metadataKey: "letterAddon",
+  },
+];
+
 export function getPlanById(id: string): Plan | undefined {
   return PLANS.find((p) => p.id === id);
 }
 
 export function getPlanByPriceId(priceId: string): Plan | undefined {
   return PLANS.find((p) => p.priceId === priceId);
+}
+
+export function getAddOnByPriceId(priceId: string): AddOn | undefined {
+  return ADD_ONS.find((a) => a.priceId === priceId);
 }

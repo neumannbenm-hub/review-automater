@@ -188,6 +188,7 @@ function StepCard({
             <option value="sms">SMS</option>
             <option value="email">Email</option>
             <option value="qr">QR Code</option>
+            <option value="letter">Letter (+$3/mo add-on)</option>
           </select>
         </div>
 
@@ -247,6 +248,21 @@ function StepCard({
 
       {step.method === "qr" && (
         <p className="text-xs text-gray-400 italic">QR steps generate a tracked link — no message sent.</p>
+      )}
+
+      {step.method === "letter" && (
+        <div>
+          <label className="block text-xs text-gray-500 mb-1">Letter body</label>
+          <textarea
+            value={step.template ?? ""}
+            onChange={(e) => onChange({ template: e.target.value })}
+            rows={3}
+            maxLength={1000}
+            placeholder="Dear {name}, we hope you enjoyed your visit to {business}. Please leave us a review at {link}."
+            className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none"
+          />
+          <p className="text-xs text-gray-400 mt-1">{step.template?.length ?? 0}/1000 chars</p>
+        </div>
       )}
     </div>
   );
