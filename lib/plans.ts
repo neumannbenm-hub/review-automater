@@ -55,7 +55,7 @@ export const ADD_ONS: AddOn[] = [
     id: "letter",
     name: "Letter",
     description: "Send a physical letter as a campaign step.",
-    price: 3,
+    price: 3.00,
     priceId: process.env.STRIPE_LETTER_ADDON_PRICE_ID ?? "",
     metadataKey: "letterAddon",
   },

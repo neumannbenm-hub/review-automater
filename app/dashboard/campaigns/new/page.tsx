@@ -188,7 +188,7 @@ function StepCard({
             <option value="sms">SMS</option>
             <option value="email">Email</option>
             <option value="qr">QR Code</option>
-            <option value="letter">Letter (+$3/mo add-on)</option>
+            <option value="letter">Letter (+$3.00/letter add-on)</option>
           </select>
         </div>
 
