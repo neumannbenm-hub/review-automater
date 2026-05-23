@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
         privateMetadata: {
           stripeCustomerId: session.customer as string,
           stripeSubscriptionId: subscriptionId,
-          stripePlan: plan?.id ?? "starter",
+          stripePlan: plan?.id ?? "pro",
         },
       });
       break;

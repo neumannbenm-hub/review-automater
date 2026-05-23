@@ -10,25 +10,10 @@ export interface Plan {
 
 export const PLANS: Plan[] = [
   {
-    id: "starter",
-    name: "Starter",
-    price: 29,
-    priceId: process.env.STRIPE_STARTER_PRICE_ID ?? "",
-    requestsPerMonth: 500,
-    campaigns: 3,
-    features: [
-      "500 review requests / mo",
-      "3 campaigns",
-      "SMS + Email + QR",
-      "Click tracking",
-      "Email support",
-    ],
-  },
-  {
     id: "pro",
     name: "Pro",
-    price: 79,
-    priceId: process.env.STRIPE_PRO_PRICE_ID ?? "",
+    price: 39,
+    priceId: process.env.STRIPE_PRICE_ID ?? "",
     requestsPerMonth: 2000,
     campaigns: -1,
     features: [

@@ -1,5 +1,4 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
-import Link from "next/link";
 import { PLANS } from "@/lib/plans";
 
 export default async function BillingPage() {
@@ -51,7 +50,7 @@ export default async function BillingPage() {
 
       {/* Plan comparison */}
       {!isActive && (
-        <div className="grid sm:grid-cols-2 gap-4">
+        <div className="max-w-sm">
           {PLANS.map((plan) => (
             <div
               key={plan.id}
