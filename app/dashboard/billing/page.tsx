@@ -101,7 +101,7 @@ export default async function BillingPage() {
                 </div>
                 <div className="flex items-baseline gap-1 mb-5">
                   <span className="text-3xl font-black text-gray-900">${addOn.price}</span>
-                  <span className="text-gray-400 text-sm">/mo</span>
+                  <span className="text-gray-400 text-sm">{addOn.pricingLabel}</span>
                 </div>
                 {isEnabled ? (
                   <form action="/api/billing/portal" method="POST">

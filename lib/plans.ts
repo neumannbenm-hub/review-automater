@@ -13,6 +13,7 @@ export interface AddOn {
   name: string;
   description: string;
   price: number;
+  pricingLabel: string;
   priceId: string;
   metadataKey: string;
 }
@@ -56,6 +57,7 @@ export const ADD_ONS: AddOn[] = [
     name: "Letter",
     description: "Send a physical letter as a campaign step.",
     price: 3.00,
+    pricingLabel: "/send",
     priceId: process.env.STRIPE_LETTER_ADDON_PRICE_ID ?? "",
     metadataKey: "letterAddon",
   },
