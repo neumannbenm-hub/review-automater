@@ -170,6 +170,141 @@ export default async function LandingPage() {
         </div>
       </section>
 
+      {/* Competitor comparison */}
+      <section id="compare" className="max-w-6xl mx-auto px-6 py-24">
+        <h2 className="text-3xl font-bold text-center text-gray-900 mb-4">
+          How we stack up
+        </h2>
+        <p className="text-gray-500 text-center mb-16">
+          ReviewAutomater vs. the alternatives — at a glance.
+        </p>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm border-separate border-spacing-0">
+            <thead>
+              <tr>
+                <th className="text-left font-semibold text-gray-500 py-3 px-4 bg-gray-50 rounded-tl-xl border border-gray-200 border-r-0 w-1/4">
+                  Feature
+                </th>
+                {[
+                  { name: "ReviewAutomater", highlight: true },
+                  { name: "Birdeye", highlight: false },
+                  { name: "Podium", highlight: false },
+                  { name: "Grade.us", highlight: false },
+                ].map(({ name, highlight }, i) => (
+                  <th
+                    key={name}
+                    className={`text-center font-semibold py-3 px-4 border border-gray-200 border-l-0 ${
+                      i === 3 ? "rounded-tr-xl" : ""
+                    } ${
+                      highlight
+                        ? "bg-brand-600 text-white"
+                        : "bg-gray-50 text-gray-700"
+                    }`}
+                  >
+                    {highlight ? (
+                      <span className="flex flex-col items-center gap-0.5">
+                        {name}
+                        <span className="text-[10px] font-normal bg-white/20 px-1.5 py-0.5 rounded-full">
+                          You&apos;re here
+                        </span>
+                      </span>
+                    ) : (
+                      name
+                    )}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                {
+                  feature: "Starting price",
+                  values: ["$29 / mo", "~$299 / mo", "~$399 / mo", "~$110 / mo"],
+                },
+                {
+                  feature: "SMS automation",
+                  values: [true, true, true, false],
+                },
+                {
+                  feature: "Email automation",
+                  values: [true, true, true, true],
+                },
+                {
+                  feature: "QR code campaigns",
+                  values: [true, false, false, true],
+                },
+                {
+                  feature: "Auto-stop after review",
+                  values: [true, false, false, false],
+                },
+                {
+                  feature: "API / webhook enrollment",
+                  values: [true, true, false, false],
+                },
+                {
+                  feature: "No per-location fees",
+                  values: [true, false, false, false],
+                },
+                {
+                  feature: "Setup time",
+                  values: ["< 30 min", "2–4 weeks", "1–2 weeks", "1–3 days"],
+                },
+              ].map(({ feature, values }, rowIdx) => {
+                const isLast = rowIdx === 7;
+                return (
+                  <tr key={feature} className="group">
+                    <td
+                      className={`py-3.5 px-4 font-medium text-gray-700 bg-gray-50 border border-gray-200 border-t-0 border-r-0 ${
+                        isLast ? "rounded-bl-xl" : ""
+                      }`}
+                    >
+                      {feature}
+                    </td>
+                    {values.map((val, colIdx) => {
+                      const isHighlight = colIdx === 0;
+                      const isLastCol = colIdx === 3;
+                      return (
+                        <td
+                          key={colIdx}
+                          className={`py-3.5 px-4 text-center border border-gray-200 border-t-0 border-l-0 ${
+                            isLast && isLastCol ? "rounded-br-xl" : ""
+                          } ${
+                            isHighlight
+                              ? "bg-brand-50 text-brand-700 font-semibold"
+                              : "text-gray-600 group-hover:bg-gray-50/60"
+                          }`}
+                        >
+                          {typeof val === "boolean" ? (
+                            val ? (
+                              <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-green-100 text-green-600 mx-auto">
+                                <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                </svg>
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gray-100 text-gray-400 mx-auto">
+                                <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                                </svg>
+                              </span>
+                            )
+                          ) : (
+                            val
+                          )}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        <p className="text-xs text-gray-400 text-center mt-4">
+          Competitor pricing based on publicly listed plans as of 2025. Features verified from public documentation.
+        </p>
+      </section>
+
       {/* Pricing */}
       <section id="pricing" className="max-w-6xl mx-auto px-6 py-24">
         <h2 className="text-3xl font-bold text-center text-gray-900 mb-4">
