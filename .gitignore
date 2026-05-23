@@ -13,6 +13,9 @@ out/
 # Build output
 dist/
 
+# TypeScript incremental build info
+*.tsbuildinfo
+
 # OS
 .DS_Store
 Thumbs.db
