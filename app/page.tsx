@@ -175,38 +175,31 @@ export default async function LandingPage() {
         <h2 className="text-3xl font-bold text-center text-gray-900 mb-4">
           Simple, transparent pricing
         </h2>
-        <p className="text-gray-500 text-center mb-16">
+        <p className="text-gray-500 text-center mb-2">
           Start free for 14 days. No credit card required.
         </p>
-        <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-          {PLANS.map((plan, i) => (
+        <p className="text-center text-sm text-gray-400 mb-16">
+          SMS and email always included — no separate per-message charges.
+        </p>
+        <div className="max-w-sm mx-auto">
+          {PLANS.map((plan) => (
             <div
               key={plan.id}
-              className={`rounded-2xl p-8 border ${
-                i === 1
-                  ? "border-brand-500 bg-brand-600 text-white shadow-xl shadow-brand-100"
-                  : "border-gray-200 bg-white"
-              }`}
+              className="rounded-2xl p-8 border border-brand-500 bg-brand-600 text-white shadow-xl shadow-brand-100"
             >
-              {i === 1 && (
-                <div className="inline-block bg-white/20 text-white text-xs font-semibold px-2 py-0.5 rounded-full mb-4">
-                  Most popular
-                </div>
-              )}
-              <h3 className={`text-xl font-bold mb-1 ${i === 1 ? "text-white" : "text-gray-900"}`}>
-                {plan.name}
-              </h3>
-              <div className="flex items-baseline gap-1 mb-6">
-                <span className={`text-4xl font-black ${i === 1 ? "text-white" : "text-gray-900"}`}>
-                  ${plan.price}
-                </span>
-                <span className={i === 1 ? "text-white/70" : "text-gray-400"}>/mo</span>
+              <h3 className="text-xl font-bold mb-1 text-white">{plan.name}</h3>
+              <div className="flex items-baseline gap-1 mb-2">
+                <span className="text-4xl font-black text-white">${plan.price}</span>
+                <span className="text-white/70">/mo</span>
               </div>
+              <p className="text-white/60 text-sm mb-6">
+                then ${plan.overagePerSequence.toFixed(2)} per additional sequence
+              </p>
               <ul className="space-y-3 mb-8">
                 {plan.features.map((f) => (
                   <li key={f} className="flex items-center gap-2 text-sm">
                     <svg
-                      className={`w-4 h-4 flex-shrink-0 ${i === 1 ? "text-white" : "text-brand-500"}`}
+                      className="w-4 h-4 flex-shrink-0 text-white"
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
@@ -216,17 +209,13 @@ export default async function LandingPage() {
                         clipRule="evenodd"
                       />
                     </svg>
-                    <span className={i === 1 ? "text-white/90" : "text-gray-600"}>{f}</span>
+                    <span className="text-white/90">{f}</span>
                   </li>
                 ))}
               </ul>
               <Link
                 href="/sign-up"
-                className={`block text-center py-3 rounded-xl font-semibold text-sm transition-colors ${
-                  i === 1
-                    ? "bg-white text-brand-600 hover:bg-brand-50"
-                    : "bg-brand-600 text-white hover:bg-brand-700"
-                }`}
+                className="block text-center py-3 rounded-xl font-semibold text-sm bg-white text-brand-600 hover:bg-brand-50 transition-colors"
               >
                 Start free trial
               </Link>

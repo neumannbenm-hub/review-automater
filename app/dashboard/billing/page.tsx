@@ -26,7 +26,7 @@ export default async function BillingPage() {
             <div>
               <p className="text-lg font-bold text-gray-900">{currentPlan.name}</p>
               <p className="text-sm text-gray-400">
-                ${currentPlan.price}/mo · {currentPlan.requestsPerMonth.toLocaleString()} requests/mo
+                ${currentPlan.price}/mo · {currentPlan.requestsPerMonth.toLocaleString()} sequences included · ${currentPlan.overagePerSequence.toFixed(2)} each after
               </p>
             </div>
             <form action="/api/billing/portal" method="POST">
@@ -49,19 +49,22 @@ export default async function BillingPage() {
         )}
       </div>
 
-      {/* Plan comparison */}
+      {/* Plan */}
       {!isActive && (
-        <div className="grid sm:grid-cols-2 gap-4">
+        <div className="max-w-sm">
           {PLANS.map((plan) => (
             <div
               key={plan.id}
               className="bg-white rounded-2xl border border-gray-100 p-6"
             >
               <h3 className="font-bold text-gray-900 text-lg mb-1">{plan.name}</h3>
-              <div className="flex items-baseline gap-1 mb-5">
+              <div className="flex items-baseline gap-1 mb-1">
                 <span className="text-3xl font-black text-gray-900">${plan.price}</span>
                 <span className="text-gray-400 text-sm">/mo</span>
               </div>
+              <p className="text-xs text-gray-400 mb-5">
+                then ${plan.overagePerSequence.toFixed(2)} per additional sequence
+              </p>
               <ul className="space-y-2 mb-6">
                 {plan.features.map((f) => (
                   <li key={f} className="flex items-center gap-2 text-sm text-gray-600">
@@ -72,7 +75,7 @@ export default async function BillingPage() {
                   </li>
                 ))}
               </ul>
-              <CheckoutButton priceId={plan.priceId} label={`Upgrade to ${plan.name}`} />
+              <CheckoutButton priceId={plan.priceId} label="Upgrade to Standard" />
             </div>
           ))}
         </div>

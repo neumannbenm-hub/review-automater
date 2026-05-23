@@ -4,39 +4,27 @@ export interface Plan {
   price: number;
   priceId: string;
   requestsPerMonth: number;
+  overagePerSequence: number;
   campaigns: number; // -1 = unlimited
   features: string[];
 }
 
 export const PLANS: Plan[] = [
   {
-    id: "starter",
-    name: "Starter",
-    price: 29,
-    priceId: process.env.STRIPE_STARTER_PRICE_ID ?? "",
+    id: "standard",
+    name: "Standard",
+    price: 49,
+    priceId: process.env.STRIPE_PLAN_PRICE_ID ?? "",
     requestsPerMonth: 500,
-    campaigns: 3,
-    features: [
-      "500 review requests / mo",
-      "3 campaigns",
-      "SMS + Email + QR",
-      "Click tracking",
-      "Email support",
-    ],
-  },
-  {
-    id: "pro",
-    name: "Pro",
-    price: 79,
-    priceId: process.env.STRIPE_PRO_PRICE_ID ?? "",
-    requestsPerMonth: 2000,
+    overagePerSequence: 0.10,
     campaigns: -1,
     features: [
-      "2,000 review requests / mo",
+      "500 sequences / mo included",
+      "$0.10 per additional sequence",
       "Unlimited campaigns",
       "SMS + Email + QR",
       "Click tracking & analytics",
-      "Priority support",
+      "Email support",
     ],
   },
 ];
