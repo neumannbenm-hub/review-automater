@@ -3,6 +3,7 @@ import { UserButton } from "@clerk/nextjs";
 
 const NAV = [
   { href: "/dashboard", label: "Overview", icon: "▦" },
+  { href: "/dashboard/analytics", label: "Analytics", icon: "◑" },
   { href: "/dashboard/requests", label: "Send Request", icon: "↗" },
   { href: "/dashboard/campaigns", label: "Campaigns", icon: "◈" },
   { href: "/dashboard/enrollments", label: "Enrollments", icon: "⊞" },

@@ -197,3 +197,40 @@ export function stopEnrollment(id: string) {
     { method: "POST" }
   );
 }
+
+// ── Analytics ────────────────────────────────────────────────────────────
+
+export type SentimentRating = "positive" | "negative";
+
+export interface GlobalAnalytics {
+  totalEnrolled: number;
+  totalConverted: number;
+  totalStopped: number;
+  totalPositive: number;
+  totalNegative: number;
+  totalClickedNotConverted: number;
+}
+
+export interface CampaignAnalytics {
+  totalEnrolled: number;
+  totalConverted: number;
+  totalPositive: number;
+  totalNegative: number;
+  totalClickedNotConverted: number;
+}
+
+// These endpoints require backend implementation; return null gracefully until available.
+export function getAnalytics(businessId: string): Promise<GlobalAnalytics | null> {
+  return request<GlobalAnalytics>(
+    `/api/analytics?businessId=${encodeURIComponent(businessId)}`
+  ).catch(() => null);
+}
+
+export function getCampaignAnalytics(
+  campaignId: string,
+  businessId: string
+): Promise<CampaignAnalytics | null> {
+  return request<CampaignAnalytics>(
+    `/api/analytics/campaigns/${campaignId}?businessId=${encodeURIComponent(businessId)}`
+  ).catch(() => null);
+}
