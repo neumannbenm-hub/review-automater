@@ -1,9 +1,41 @@
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
+import Link from "next/link";
 import { listEnrollments, listCampaigns, type Enrollment } from "@/lib/api";
 import { EnrollForm } from "./EnrollForm";
 
 export default async function EnrollmentsPage() {
   const { userId } = await auth();
+  const user = await currentUser();
+
+  const isActive =
+    !!(user?.privateMetadata?.stripeSubscriptionId) &&
+    !!(user?.privateMetadata?.stripePlan);
+
+  if (!isActive) {
+    return (
+      <div className="max-w-xl">
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-gray-900">Enrollments</h1>
+          <p className="text-gray-500 mt-1 text-sm">
+            Customers currently in a campaign sequence.
+          </p>
+        </div>
+        <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center">
+          <div className="text-4xl mb-4">◎</div>
+          <h2 className="font-semibold text-gray-900 mb-2">Subscription required</h2>
+          <p className="text-sm text-gray-400 mb-6">
+            Subscribe to enroll customers into campaigns and start automating review collection.
+          </p>
+          <Link
+            href="/dashboard/billing"
+            className="inline-block bg-brand-600 text-white px-6 py-2.5 rounded-xl text-sm font-semibold hover:bg-brand-700 transition-colors"
+          >
+            View plans
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   let enrollments: Enrollment[] = [];
   let campaigns: Awaited<ReturnType<typeof listCampaigns>> = [];
