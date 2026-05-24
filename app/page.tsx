@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
-import { PLANS } from "@/lib/plans";
+import { PLANS, ADD_ONS } from "@/lib/plans";
 
 export default async function LandingPage() {
   const { userId } = await auth();
@@ -177,60 +177,70 @@ export default async function LandingPage() {
         <p className="text-gray-500 text-center mb-16">
           Start free for 14 days. No credit card required.
         </p>
-        <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-          {PLANS.map((plan, i) => (
+
+        {/* Base plan */}
+        <div className="max-w-md mx-auto mb-12">
+          {PLANS.map((plan) => (
             <div
               key={plan.id}
-              className={`rounded-2xl p-8 border ${
-                i === 1
-                  ? "border-brand-500 bg-brand-600 text-white shadow-xl shadow-brand-100"
-                  : "border-gray-200 bg-white"
-              }`}
+              className="rounded-2xl p-8 border border-brand-500 bg-brand-600 text-white shadow-xl shadow-brand-100"
             >
-              {i === 1 && (
-                <div className="inline-block bg-white/20 text-white text-xs font-semibold px-2 py-0.5 rounded-full mb-4">
-                  Most popular
-                </div>
-              )}
-              <h3 className={`text-xl font-bold mb-1 ${i === 1 ? "text-white" : "text-gray-900"}`}>
-                {plan.name}
-              </h3>
+              <h3 className="text-xl font-bold text-white mb-1">{plan.name}</h3>
               <div className="flex items-baseline gap-1 mb-6">
-                <span className={`text-4xl font-black ${i === 1 ? "text-white" : "text-gray-900"}`}>
-                  ${plan.price}
-                </span>
-                <span className={i === 1 ? "text-white/70" : "text-gray-400"}>/mo</span>
+                <span className="text-4xl font-black text-white">${plan.price}</span>
+                <span className="text-white/70">/mo</span>
               </div>
               <ul className="space-y-3 mb-8">
                 {plan.features.map((f) => (
                   <li key={f} className="flex items-center gap-2 text-sm">
-                    <svg
-                      className={`w-4 h-4 flex-shrink-0 ${i === 1 ? "text-white" : "text-brand-500"}`}
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clipRule="evenodd"
-                      />
+                    <svg className="w-4 h-4 flex-shrink-0 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
-                    <span className={i === 1 ? "text-white/90" : "text-gray-600"}>{f}</span>
+                    <span className="text-white/90">{f}</span>
                   </li>
                 ))}
               </ul>
               <Link
                 href="/sign-up"
-                className={`block text-center py-3 rounded-xl font-semibold text-sm transition-colors ${
-                  i === 1
-                    ? "bg-white text-brand-600 hover:bg-brand-50"
-                    : "bg-brand-600 text-white hover:bg-brand-700"
-                }`}
+                className="block text-center py-3 rounded-xl font-semibold text-sm bg-white text-brand-600 hover:bg-brand-50 transition-colors"
               >
                 Start free trial
               </Link>
             </div>
           ))}
+        </div>
+
+        {/* Add-ons */}
+        <div className="max-w-4xl mx-auto">
+          <h3 className="text-xl font-bold text-center text-gray-900 mb-2">Add-ons</h3>
+          <p className="text-sm text-gray-500 text-center mb-8">
+            All packs roll over and auto-repurchase when depleted. Premium sequences include physical mail and voicemail drops.
+          </p>
+          <div className="grid md:grid-cols-3 gap-6">
+            {ADD_ONS.map((addon) => (
+              <div key={addon.id} className="rounded-2xl p-6 border border-gray-200 bg-white">
+                <h4 className="font-bold text-gray-900 mb-1">{addon.name}</h4>
+                <div className="flex items-baseline gap-1 mb-4">
+                  <span className="text-3xl font-black text-gray-900">${addon.price}</span>
+                  <span className="text-gray-400 text-sm">/ {addon.quantity} {addon.unit}</span>
+                </div>
+                <ul className="space-y-2 text-sm text-gray-500">
+                  <li className="flex items-center gap-2">
+                    <svg className="w-4 h-4 text-brand-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    Unused {addon.unit} roll over
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <svg className="w-4 h-4 text-brand-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    Auto-repurchases when used
+                  </li>
+                </ul>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 

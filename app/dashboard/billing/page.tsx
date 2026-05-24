@@ -25,7 +25,7 @@ export default async function BillingPage() {
             <div>
               <p className="text-lg font-bold text-gray-900">{currentPlan.name}</p>
               <p className="text-sm text-gray-400">
-                ${currentPlan.price}/mo · {currentPlan.requestsPerMonth.toLocaleString()} requests/mo
+                ${currentPlan.price}/mo · {currentPlan.sequencesPerMonth.toLocaleString()} sequences/mo
               </p>
             </div>
             <form action="/api/billing/portal" method="POST">
