@@ -27,11 +27,13 @@ export const PLANS: Plan[] = [
     sequencesPerMonth: 400,
     features: [
       "400 sequences / mo",
-      "Each sequence = one step in a review request campaign",
-      "SMS + Email + QR",
-      "Click tracking & analytics",
       "Unused sequences roll over",
-      "Priority support",
+      "Unlimited locations",
+      "Unlimited campaigns",
+      "Unlimited review sites",
+      "Free 15-minute setup call with the team",
+      "Priority US-based support",
+      "Monthly webinars",
     ],
   },
 ];
