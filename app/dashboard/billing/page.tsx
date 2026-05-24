@@ -40,9 +40,9 @@ export default async function BillingPage() {
           </div>
         ) : (
           <div className="text-center py-8">
-            <p className="text-gray-500 mb-2">You&apos;re on the free trial.</p>
+            <p className="text-gray-500 mb-2">No active subscription.</p>
             <p className="text-sm text-gray-400 mb-6">
-              Upgrade to unlock full features after your trial ends.
+              Subscribe to start sending review requests and enrolling customers.
             </p>
           </div>
         )}
@@ -71,7 +71,7 @@ export default async function BillingPage() {
                   </li>
                 ))}
               </ul>
-              <CheckoutButton priceId={plan.priceId} label={`Upgrade to ${plan.name}`} />
+              <CheckoutButton priceId={plan.priceId} label={`Subscribe to ${plan.name}`} />
             </div>
           ))}
         </div>

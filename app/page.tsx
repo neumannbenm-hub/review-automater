@@ -58,7 +58,7 @@ export default async function LandingPage() {
             href="/sign-up"
             className="bg-brand-600 text-white px-8 py-3.5 rounded-xl text-base font-semibold hover:bg-brand-700 transition-colors shadow-lg shadow-brand-100"
           >
-            Start free trial
+            Get started
           </Link>
           <a
             href="#how-it-works"
@@ -67,7 +67,6 @@ export default async function LandingPage() {
             See how it works
           </a>
         </div>
-        <p className="mt-4 text-sm text-gray-400">No credit card required · 14-day free trial</p>
       </section>
 
       {/* Stats bar */}
@@ -176,7 +175,7 @@ export default async function LandingPage() {
           Simple, transparent pricing
         </h2>
         <p className="text-gray-500 text-center mb-16">
-          Start free for 14 days. No credit card required.
+          Subscribe and start automating review collection today.
         </p>
         <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
           {PLANS.map((plan, i) => (
@@ -228,7 +227,7 @@ export default async function LandingPage() {
                     : "bg-brand-600 text-white hover:bg-brand-700"
                 }`}
               >
-                Start free trial
+                Get started
               </Link>
             </div>
           ))}

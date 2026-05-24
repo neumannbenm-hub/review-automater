@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
 
       const priceId = sub.items.data[0]?.price.id;
       const plan = priceId ? getPlanByPriceId(priceId) : undefined;
-      const isActive = sub.status === "active" || sub.status === "trialing";
+      const isActive = sub.status === "active";
 
       await clerk.users.updateUserMetadata(user.id, {
         privateMetadata: {
