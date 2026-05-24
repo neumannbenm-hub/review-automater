@@ -97,6 +97,7 @@ const isPublicRoute = createRouteMatcher([
   "/api/accept-invite(.*)",
 ]);
 
+
 const isSuperAdminRoute = createRouteMatcher(["/super-admin(.*)"]);
 
 // ── Middleware ─────────────────────────────────────────────────────────────────

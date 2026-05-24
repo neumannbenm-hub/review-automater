@@ -59,6 +59,37 @@ export interface TenantInvite {
   created_at: string;
 }
 
+export interface BusinessProfile {
+  id: string;
+  tenant_id: string;
+  business_name: string;
+  business_type: string | null;
+  phone: string | null;
+  address: string | null;
+  city: string | null;
+  state: string | null;
+  zip: string | null;
+  website: string | null;
+  admin_first_name: string | null;
+  admin_last_name: string | null;
+  admin_email: string | null;
+  admin_phone: string | null;
+  admin_title: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ReviewSite {
+  id: string;
+  tenant_id: string;
+  platform: string;
+  display_name: string | null;
+  url: string;
+  is_active: boolean;
+  sort_order: number;
+  created_at: string;
+}
+
 // ── Client factory ─────────────────────────────────────────────────────────────
 // Server-side only. Uses the service-role key which bypasses RLS.
 // All queries must include explicit tenant_id filters for data isolation.

@@ -48,9 +48,16 @@ export async function acceptInvite(formData: FormData) {
     .update({ accepted_at: new Date().toISOString() })
     .eq("id", invite.id);
 
-  // Redirect to appropriate dashboard based on role
+  // New tenant admins go through onboarding; members go straight to dashboard
   if (invite.role === "tenant_admin") {
-    redirect("/tenant-admin");
+    const { data: completed } = await db
+      .from("tenant_accounts")
+      .select("onboarding_completed_at")
+      .eq("tenant_id", invite.tenant_id)
+      .eq("clerk_user_id", userId)
+      .maybeSingle();
+
+    redirect(completed?.onboarding_completed_at ? "/tenant-admin" : "/onboarding");
   } else {
     redirect("/dashboard");
   }
