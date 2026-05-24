@@ -3,9 +3,19 @@ export interface Plan {
   name: string;
   price: number;
   priceId: string;
-  requestsPerMonth: number;
-  campaigns: number; // -1 = unlimited
+  sequencesPerMonth: number;
   features: string[];
+}
+
+export interface AddOn {
+  id: string;
+  name: string;
+  price: number;
+  priceId: string;
+  quantity: number;
+  unit: string;
+  rollover: boolean;
+  autoRepurchase: boolean;
 }
 
 export const PLANS: Plan[] = [
@@ -14,15 +24,50 @@ export const PLANS: Plan[] = [
     name: "Pro",
     price: 39,
     priceId: process.env.STRIPE_PRICE_ID ?? "",
-    requestsPerMonth: 2000,
-    campaigns: -1,
+    sequencesPerMonth: 400,
     features: [
-      "2,000 review requests / mo",
+      "400 sequences / mo",
+      "Unused sequences roll over",
+      "Unlimited locations",
       "Unlimited campaigns",
-      "SMS + Email + QR",
-      "Click tracking & analytics",
-      "Priority support",
+      "Unlimited review sites",
+      "Free 15-minute setup call with the team",
+      "Priority US-based support",
+      "Monthly webinars",
     ],
+  },
+];
+
+export const ADD_ONS: AddOn[] = [
+  {
+    id: "sequences-extra",
+    name: "Extra Sequences",
+    price: 25,
+    priceId: process.env.STRIPE_ADDON_SEQUENCES_PRICE_ID ?? "",
+    quantity: 250,
+    unit: "sequences",
+    rollover: true,
+    autoRepurchase: true,
+  },
+  {
+    id: "voicemail-drops",
+    name: "Voicemail Drops",
+    price: 10,
+    priceId: process.env.STRIPE_ADDON_VOICEMAIL_PRICE_ID ?? "",
+    quantity: 50,
+    unit: "voicemail drops",
+    rollover: true,
+    autoRepurchase: true,
+  },
+  {
+    id: "mailing-letters",
+    name: "Mailing Letters",
+    price: 150,
+    priceId: process.env.STRIPE_ADDON_LETTERS_PRICE_ID ?? "",
+    quantity: 50,
+    unit: "letters",
+    rollover: true,
+    autoRepurchase: true,
   },
 ];
 
