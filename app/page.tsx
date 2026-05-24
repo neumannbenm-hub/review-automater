@@ -72,11 +72,10 @@ export default async function LandingPage() {
 
       {/* Stats bar */}
       <section className="border-y border-gray-100 bg-gray-50 py-10">
-        <div className="max-w-4xl mx-auto px-6 grid grid-cols-3 gap-8 text-center">
+        <div className="max-w-4xl mx-auto px-6 grid grid-cols-2 gap-8 text-center">
           {[
             { value: "3.2×", label: "more reviews on average" },
             { value: "< 30s", label: "to set up a campaign" },
-            { value: "$0–15/mo", label: "infrastructure cost" },
           ].map(({ value, label }) => (
             <div key={label}>
               <p className="text-3xl font-bold text-gray-900">{value}</p>
