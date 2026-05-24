@@ -117,7 +117,7 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
   // Inject tenant context for non-root domains
   const tenantHeaders: Record<string, string> = {};
 
-  if (!isRootDomain) {
+  if (!isRootDomain && SUPABASE_URL && SUPABASE_SERVICE_KEY) {
     const entry = await resolveTenant(hostname);
 
     if (!entry) {
