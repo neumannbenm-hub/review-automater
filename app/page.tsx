@@ -108,6 +108,25 @@ export default async function LandingPage() {
         </div>
       </section>
 
+      {/* Demo video */}
+      <section className="max-w-4xl mx-auto px-6 py-20">
+        <h2 className="text-3xl font-bold text-center text-gray-900 mb-4">
+          See it in action
+        </h2>
+        <p className="text-gray-500 text-center mb-10">
+          Watch how ReviewAutomater turns a single customer visit into a steady stream of 5-star reviews.
+        </p>
+        <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-gray-100" style={{ paddingTop: "56.25%" }}>
+          <iframe
+            className="absolute inset-0 w-full h-full"
+            src="https://www.youtube.com/embed/YE7VzlLtp-4"
+            title="ReviewAutomater Demo"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        </div>
+      </section>
+
       {/* Why Us — 3 big differentiators */}
       <section id="why-us" className="max-w-6xl mx-auto px-6 py-24">
         <h2 className="text-3xl font-bold text-center text-gray-900 mb-4">
