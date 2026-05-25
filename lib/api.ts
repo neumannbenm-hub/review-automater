@@ -69,7 +69,7 @@ export interface Enrollment {
   campaignId: string;
   businessId: string;
   customerId: string | null;
-  contact: { name: string; phone?: string; email?: string };
+  contact: { name: string; phone?: string; email?: string; customVariables?: Record<string, string> };
   platform: Platform;
   destinationUrl: string;
   visitDate: string;
@@ -180,7 +180,7 @@ export function enrollCustomer(data: {
   campaignId: string;
   businessId: string;
   customerId?: string;
-  contact: { name: string; phone?: string; email?: string };
+  contact: { name: string; phone?: string; email?: string; customVariables?: Record<string, string> };
   platform: Platform;
   destinationUrl: string;
   visitDate?: string;

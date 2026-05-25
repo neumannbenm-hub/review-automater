@@ -6,7 +6,7 @@ import { enrollCustomer, stopEnrollment, type Platform } from "@/lib/api";
 
 export async function enrollCustomerAction(data: {
   campaignId: string;
-  contact: { name: string; phone?: string; email?: string };
+  contact: { name: string; phone?: string; email?: string; customVariables?: Record<string, string> };
   platform: Platform;
   destinationUrl: string;
   visitDate?: string;

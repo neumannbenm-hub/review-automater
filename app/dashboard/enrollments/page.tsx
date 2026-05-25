@@ -1,4 +1,4 @@
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { auth, currentUser, clerkClient } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { listEnrollments, listCampaigns, type Enrollment } from "@/lib/api";
 import { EnrollForm } from "./EnrollForm";
@@ -39,14 +39,19 @@ export default async function EnrollmentsPage() {
 
   let enrollments: Enrollment[] = [];
   let campaigns: Awaited<ReturnType<typeof listCampaigns>> = [];
+  let customVariableNames: string[] = [];
 
   try {
-    const [enResult, cResult] = await Promise.all([
+    const clerk = await clerkClient();
+    const [enResult, cResult, clerkUser] = await Promise.all([
       listEnrollments(userId!),
       listCampaigns(userId!),
+      clerk.users.getUser(userId!),
     ]);
     enrollments = enResult.enrollments;
     campaigns = cResult;
+    customVariableNames =
+      ((clerkUser.privateMetadata as Record<string, unknown>).customVariableNames as string[]) ?? [];
   } catch {
     // API not running
   }
@@ -60,7 +65,7 @@ export default async function EnrollmentsPage() {
             Customers currently in a campaign sequence.
           </p>
         </div>
-        <EnrollForm campaigns={campaigns} />
+        <EnrollForm campaigns={campaigns} customVariableNames={customVariableNames} />
       </div>
 
       {enrollments.length === 0 ? (
