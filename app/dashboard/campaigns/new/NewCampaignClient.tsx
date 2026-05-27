@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { createCampaignAction } from "@/app/actions/campaigns";
 import type { Method, CampaignStep } from "@/lib/api";
+import type { ReviewSiteEntry } from "@/app/actions/settings";
 
 type StepDraft = Omit<CampaignStep, "stepNumber">;
 
@@ -15,10 +16,17 @@ const EMPTY_STEP: StepDraft = {
   subject: null,
 };
 
-export default function NewCampaignClient({ customVariableNames = [] }: { customVariableNames?: string[] }) {
+export default function NewCampaignClient({
+  customVariableNames = [],
+  reviewSites = [],
+}: {
+  customVariableNames?: string[];
+  reviewSites?: ReviewSiteEntry[];
+}) {
   const router = useRouter();
   const [name, setName] = useState("My Campaign");
   const [steps, setSteps] = useState<StepDraft[]>([{ ...EMPTY_STEP }]);
+  const [selectedSiteIds, setSelectedSiteIds] = useState<string[]>([]);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
@@ -34,18 +42,30 @@ export default function NewCampaignClient({ customVariableNames = [] }: { custom
     setSteps((prev) => prev.map((s, idx) => (idx === i ? { ...s, ...patch } : s)));
   }
 
+  function toggleSite(id: string) {
+    setSelectedSiteIds((prev) =>
+      prev.includes(id) ? prev.filter((s) => s !== id) : [...prev, id]
+    );
+  }
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     startTransition(async () => {
       try {
-        await createCampaignAction({ name, steps });
+        await createCampaignAction({
+          name,
+          steps,
+          reviewSiteIds: selectedSiteIds.length > 0 ? selectedSiteIds : undefined,
+        });
         router.push("/dashboard/campaigns");
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to create campaign");
       }
     });
   }
+
+  const hasQrStep = steps.some((s) => s.method === "qr");
 
   return (
     <div className="max-w-2xl">
@@ -66,6 +86,70 @@ export default function NewCampaignClient({ customVariableNames = [] }: { custom
             required
             className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
           />
+        </div>
+
+        {/* Review links */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Review links</label>
+          <p className="text-xs text-gray-500 mb-3">
+            Select which review sites to display. If more than one is selected, QR codes will link
+            to a landing page where customers can choose where to leave their review.
+          </p>
+          {reviewSites.length === 0 ? (
+            <p className="text-xs text-gray-400 italic">
+              No review links configured yet.{" "}
+              <a href="/dashboard/settings" className="text-brand-600 hover:underline">
+                Add them in Settings
+              </a>{" "}
+              to use this feature.
+            </p>
+          ) : (
+            <div className="space-y-2">
+              {reviewSites.map((site) => {
+                const checked = selectedSiteIds.includes(site.id);
+                return (
+                  <label
+                    key={site.id}
+                    className={`flex items-center gap-3 px-4 py-3 border rounded-xl cursor-pointer transition-colors ${
+                      checked
+                        ? "border-brand-400 bg-brand-50"
+                        : "border-gray-200 hover:border-gray-300"
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={() => toggleSite(site.id)}
+                      className="accent-brand-600 w-4 h-4"
+                    />
+                    <span className="text-sm font-medium text-gray-800">
+                      {site.display_name ?? site.platform}
+                    </span>
+                    <span className="text-xs text-gray-400 truncate flex-1">{site.url}</span>
+                  </label>
+                );
+              })}
+            </div>
+          )}
+
+          {selectedSiteIds.length > 1 && (
+            <div className="mt-3 flex items-start gap-2 bg-blue-50 border border-blue-100 rounded-xl px-4 py-3">
+              <span className="text-blue-500 mt-0.5 flex-shrink-0">◈</span>
+              <p className="text-xs text-blue-700">
+                With {selectedSiteIds.length} review sites selected, QR codes will open a landing
+                page where customers can pick their preferred platform.
+              </p>
+            </div>
+          )}
+
+          {selectedSiteIds.length === 1 && hasQrStep && (
+            <div className="mt-3 flex items-start gap-2 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3">
+              <p className="text-xs text-gray-500">
+                With 1 review site selected, QR codes will link directly to{" "}
+                <strong>{reviewSites.find((s) => s.id === selectedSiteIds[0])?.display_name ?? "that site"}</strong>.
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Steps */}

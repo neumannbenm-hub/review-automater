@@ -1,5 +1,6 @@
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import NewCampaignClient from "./NewCampaignClient";
+import { getReviewSitesAction } from "@/app/actions/settings";
 
 export default async function NewCampaignPage() {
   const { userId } = await auth();
@@ -16,5 +17,17 @@ export default async function NewCampaignPage() {
     }
   }
 
-  return <NewCampaignClient customVariableNames={customVariableNames} />;
+  let reviewSites: Awaited<ReturnType<typeof getReviewSitesAction>> = [];
+  try {
+    reviewSites = await getReviewSitesAction();
+  } catch {
+    // non-critical
+  }
+
+  return (
+    <NewCampaignClient
+      customVariableNames={customVariableNames}
+      reviewSites={reviewSites}
+    />
+  );
 }

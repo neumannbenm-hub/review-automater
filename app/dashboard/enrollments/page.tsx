@@ -3,6 +3,7 @@ import Link from "next/link";
 import { listEnrollments, listCampaigns, type Enrollment } from "@/lib/api";
 import { EnrollForm } from "./EnrollForm";
 import { isSubscriptionActive } from "@/lib/subscription";
+import { getCampaignReviewSitesMapAction } from "@/app/actions/campaigns";
 
 export default async function EnrollmentsPage() {
   const { userId } = await auth();
@@ -41,6 +42,7 @@ export default async function EnrollmentsPage() {
   let enrollments: Enrollment[] = [];
   let campaigns: Awaited<ReturnType<typeof listCampaigns>> = [];
   let customVariableNames: string[] = [];
+  let campaignReviewSitesMap: Awaited<ReturnType<typeof getCampaignReviewSitesMapAction>> = {};
 
   try {
     const clerk = await clerkClient();
@@ -53,6 +55,12 @@ export default async function EnrollmentsPage() {
     campaigns = cResult;
     customVariableNames =
       ((clerkUser.privateMetadata as Record<string, unknown>).customVariableNames as string[]) ?? [];
+
+    if (campaigns.length > 0) {
+      campaignReviewSitesMap = await getCampaignReviewSitesMapAction(
+        campaigns.map((c) => c.id)
+      );
+    }
   } catch {
     // API not running
   }
@@ -66,7 +74,11 @@ export default async function EnrollmentsPage() {
             Customers currently in a campaign sequence.
           </p>
         </div>
-        <EnrollForm campaigns={campaigns} customVariableNames={customVariableNames} />
+        <EnrollForm
+          campaigns={campaigns}
+          customVariableNames={customVariableNames}
+          campaignReviewSitesMap={campaignReviewSitesMap}
+        />
       </div>
 
       {enrollments.length === 0 ? (

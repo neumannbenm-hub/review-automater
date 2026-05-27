@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { enrollCustomerAction } from "@/app/actions/enrollments";
 import type { Campaign, Platform } from "@/lib/api";
+import type { ReviewSiteEntry } from "@/app/actions/settings";
 
 const PLATFORMS: { value: Platform; label: string }[] = [
   { value: "google", label: "Google" },
@@ -12,23 +13,58 @@ const PLATFORMS: { value: Platform; label: string }[] = [
   { value: "custom", label: "Custom" },
 ];
 
+const ROOT_DOMAIN =
+  typeof window !== "undefined"
+    ? window.location.origin
+    : process.env.NEXT_PUBLIC_APP_URL ?? "";
+
+function getLandingPageUrl(campaignId: string) {
+  return `${ROOT_DOMAIN}/review/${campaignId}`;
+}
+
 export function EnrollForm({
   campaigns,
   customVariableNames = [],
+  campaignReviewSitesMap = {},
 }: {
   campaigns: Campaign[];
   customVariableNames?: string[];
+  campaignReviewSitesMap?: Record<string, ReviewSiteEntry[]>;
 }) {
   const [open, setOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [selectedCampaignId, setSelectedCampaignId] = useState<string>(
+    campaigns[0]?.id ?? ""
+  );
 
   if (campaigns.length === 0) return null;
+
+  const selectedSites = campaignReviewSitesMap[selectedCampaignId] ?? [];
+  const isMultiSite = selectedSites.length > 1;
+  const isSingleSite = selectedSites.length === 1;
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
     setError(null);
+
+    const campaignId = fd.get("campaignId") as string;
+    const sites = campaignReviewSitesMap[campaignId] ?? [];
+    const multiSite = sites.length > 1;
+    const singleSite = sites.length === 1;
+
+    const destinationUrl = multiSite
+      ? getLandingPageUrl(campaignId)
+      : singleSite
+      ? sites[0].url
+      : (fd.get("destinationUrl") as string);
+
+    const platform: Platform = multiSite
+      ? "custom"
+      : singleSite
+      ? (sites[0].platform as Platform)
+      : (fd.get("platform") as Platform);
 
     const customVariables: Record<string, string> = {};
     for (const name of customVariableNames) {
@@ -39,15 +75,15 @@ export function EnrollForm({
     startTransition(async () => {
       try {
         await enrollCustomerAction({
-          campaignId: fd.get("campaignId") as string,
+          campaignId,
           contact: {
             name: fd.get("name") as string,
             phone: (fd.get("phone") as string) || undefined,
             email: (fd.get("email") as string) || undefined,
             customVariables: Object.keys(customVariables).length > 0 ? customVariables : undefined,
           },
-          platform: fd.get("platform") as Platform,
-          destinationUrl: fd.get("destinationUrl") as string,
+          platform,
+          destinationUrl,
         });
         setOpen(false);
       } catch (err) {
@@ -80,6 +116,8 @@ export function EnrollForm({
                 <select
                   name="campaignId"
                   required
+                  value={selectedCampaignId}
+                  onChange={(e) => setSelectedCampaignId(e.target.value)}
                   className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
                 >
                   {campaigns.map((c) => (
@@ -89,6 +127,7 @@ export function EnrollForm({
                   ))}
                 </select>
               </div>
+
               <div>
                 <label className="block text-xs font-medium text-gray-600 mb-1">Customer name</label>
                 <input name="name" required className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" />
@@ -103,16 +142,51 @@ export function EnrollForm({
                   <input name="email" type="email" className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" />
                 </div>
               </div>
-              <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">Platform</label>
-                <select name="platform" className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
-                  {PLATFORMS.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">Review URL</label>
-                <input name="destinationUrl" type="url" required placeholder="https://g.page/r/..." className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" />
-              </div>
+
+              {isMultiSite ? (
+                <div className="flex items-start gap-3 bg-blue-50 border border-blue-100 rounded-xl px-4 py-3">
+                  <span className="text-blue-500 mt-0.5 flex-shrink-0 text-base">◈</span>
+                  <div>
+                    <p className="text-xs font-medium text-blue-800 mb-0.5">Multi-site landing page</p>
+                    <p className="text-xs text-blue-600">
+                      This campaign has {selectedSites.length} review sites. Customers will be sent
+                      to a landing page where they can choose where to leave their review.
+                    </p>
+                    <div className="mt-2 flex flex-wrap gap-1">
+                      {selectedSites.map((s) => (
+                        <span
+                          key={s.id}
+                          className="inline-block bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded-full font-medium"
+                        >
+                          {s.display_name ?? s.platform}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : isSingleSite ? (
+                <div className="flex items-start gap-3 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3">
+                  <p className="text-xs text-gray-500">
+                    Review link:{" "}
+                    <strong>{selectedSites[0].display_name ?? selectedSites[0].platform}</strong>
+                    {" — "}
+                    <span className="text-gray-400 truncate">{selectedSites[0].url}</span>
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Platform</label>
+                    <select name="platform" className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                      {PLATFORMS.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Review URL</label>
+                    <input name="destinationUrl" type="url" required placeholder="https://g.page/r/..." className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" />
+                  </div>
+                </>
+              )}
 
               {customVariableNames.length > 0 && (
                 <div className="border-t border-gray-100 pt-4">
