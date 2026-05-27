@@ -23,7 +23,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
     [user?.firstName, user?.lastName].filter(Boolean).join(" ") ??
     "My Business";
 
-  await ensureTenantProvisioned(userId, displayName);
+  try {
+    await ensureTenantProvisioned(userId, displayName);
+  } catch {
+    // non-fatal — user can still access the dashboard without a tenant
+  }
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar */}
