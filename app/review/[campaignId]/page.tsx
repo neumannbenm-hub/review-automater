@@ -25,7 +25,7 @@ async function getCampaignLandingData(campaignId: string): Promise<{
 
     if (!crsRows || crsRows.length === 0) return null;
 
-    const sites = (crsRows as Array<{ review_sites: ReviewSite | null }>)
+    const sites = (crsRows as unknown as Array<{ review_sites: ReviewSite | null }>)
       .map((r) => r.review_sites)
       .filter((s): s is ReviewSite => s !== null);
 
