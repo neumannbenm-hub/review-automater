@@ -4,7 +4,7 @@ import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { createCampaign, deleteCampaign, type CampaignStep } from "@/lib/api";
 import { createServiceClient } from "@/lib/supabase";
-import { getCurrentTenantId } from "@/lib/tenant";
+import { getCurrentTenantIdForUser } from "@/lib/tenant";
 import type { ReviewSiteEntry } from "@/app/actions/settings";
 
 export async function createCampaignAction(data: {
@@ -19,7 +19,7 @@ export async function createCampaignAction(data: {
   const campaign = await createCampaign({ ...campaignData, businessId: userId });
 
   if (reviewSiteIds && reviewSiteIds.length > 0) {
-    const tenantId = await getCurrentTenantId();
+    const tenantId = await getCurrentTenantIdForUser(userId);
     if (tenantId) {
       const db = createServiceClient();
       await db.from("campaign_review_sites").insert(
