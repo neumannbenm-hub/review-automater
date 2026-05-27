@@ -65,7 +65,7 @@ export async function getCampaignReviewSitesAction(
   if (!data) return [];
   return data
     .map((row) => {
-      const site = row.review_sites as ReviewSiteEntry | null;
+      const site = row.review_sites as unknown as ReviewSiteEntry | null;
       return site;
     })
     .filter((s): s is ReviewSiteEntry => s !== null);
@@ -89,7 +89,7 @@ export async function getCampaignReviewSitesMapAction(
 
   const map: Record<string, ReviewSiteEntry[]> = {};
   for (const row of data) {
-    const site = row.review_sites as ReviewSiteEntry | null;
+    const site = row.review_sites as unknown as ReviewSiteEntry | null;
     if (!site) continue;
     if (!map[row.campaign_id]) map[row.campaign_id] = [];
     map[row.campaign_id].push(site);
