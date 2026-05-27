@@ -44,15 +44,19 @@ export async function getCurrentTenantIdForUser(userId: string): Promise<string 
   const fromHeader = await getCurrentTenantId();
   if (fromHeader) return fromHeader;
 
-  const db = createServiceClient();
-  const { data } = await db
-    .from("tenant_accounts")
-    .select("tenant_id")
-    .eq("clerk_user_id", userId)
-    .eq("status", "active")
-    .limit(1)
-    .maybeSingle();
-  return data?.tenant_id ?? null;
+  try {
+    const db = createServiceClient();
+    const { data } = await db
+      .from("tenant_accounts")
+      .select("tenant_id")
+      .eq("clerk_user_id", userId)
+      .eq("status", "active")
+      .limit(1)
+      .maybeSingle();
+    return data?.tenant_id ?? null;
+  } catch {
+    return null;
+  }
 }
 
 // Creates a tenant + admin account for a user if one doesn't exist yet.
