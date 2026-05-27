@@ -2,14 +2,15 @@ import { auth, currentUser, clerkClient } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { listEnrollments, listCampaigns, type Enrollment } from "@/lib/api";
 import { EnrollForm } from "./EnrollForm";
+import { isSubscriptionActive } from "@/lib/subscription";
 
 export default async function EnrollmentsPage() {
   const { userId } = await auth();
   const user = await currentUser();
 
-  const isActive =
-    !!(user?.privateMetadata?.stripeSubscriptionId) &&
-    !!(user?.privateMetadata?.stripePlan);
+  const isActive = isSubscriptionActive(
+    (user?.privateMetadata ?? {}) as Record<string, unknown>
+  );
 
   if (!isActive) {
     return (

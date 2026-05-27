@@ -1,13 +1,14 @@
 import { currentUser } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { SendRequestForm } from "./SendRequestForm";
+import { isSubscriptionActive } from "@/lib/subscription";
 
 export default async function SendRequestPage() {
   const user = await currentUser();
 
-  const isActive =
-    !!(user?.privateMetadata?.stripeSubscriptionId) &&
-    !!(user?.privateMetadata?.stripePlan);
+  const isActive = isSubscriptionActive(
+    (user?.privateMetadata ?? {}) as Record<string, unknown>
+  );
 
   if (!isActive) {
     return (

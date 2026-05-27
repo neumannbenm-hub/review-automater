@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { clerkClient } from "@clerk/nextjs/server";
 import { enrollCustomer, type Platform } from "@/lib/api";
+import { isSubscriptionActive } from "@/lib/subscription";
 
 export async function POST(req: NextRequest) {
   const apiKey = req.headers.get("x-api-key");
@@ -20,9 +21,7 @@ export async function POST(req: NextRequest) {
   }
 
   const meta = user.privateMetadata as Record<string, unknown>;
-  const isActive =
-    typeof meta.stripeSubscriptionId === "string" &&
-    typeof meta.stripePlan === "string";
+  const isActive = isSubscriptionActive(meta);
 
   if (!isActive) {
     return NextResponse.json({ error: "Account does not have an active subscription" }, { status: 403 });
