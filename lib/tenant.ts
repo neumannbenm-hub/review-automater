@@ -38,6 +38,55 @@ export async function getCurrentBranding(): Promise<TenantBranding> {
 
 // ── DB helpers (server-side, service role) ─────────────────────────────────────
 
+// Resolves tenant ID for a given Clerk user — header first (subdomain/custom domain),
+// then falls back to a DB lookup for root-domain users.
+export async function getCurrentTenantIdForUser(userId: string): Promise<string | null> {
+  const fromHeader = await getCurrentTenantId();
+  if (fromHeader) return fromHeader;
+
+  const db = createServiceClient();
+  const { data } = await db
+    .from("tenant_accounts")
+    .select("tenant_id")
+    .eq("clerk_user_id", userId)
+    .eq("status", "active")
+    .limit(1)
+    .maybeSingle();
+  return data?.tenant_id ?? null;
+}
+
+// Creates a tenant + admin account for a user if one doesn't exist yet.
+export async function ensureTenantProvisioned(userId: string, displayName: string): Promise<string> {
+  const existing = await getCurrentTenantIdForUser(userId);
+  if (existing) return existing;
+
+  const db = createServiceClient();
+  const base = userId.toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 16);
+  const suffix = Math.random().toString(36).slice(2, 8);
+  const slug = `${base}-${suffix}`;
+
+  const { data: tenant, error: tenantError } = await db
+    .from("tenants")
+    .insert({ slug, name: displayName, status: "active" })
+    .select("id")
+    .single();
+
+  if (tenantError || !tenant) throw new Error(`Failed to provision tenant: ${tenantError?.message}`);
+
+  const { error: accountError } = await db
+    .from("tenant_accounts")
+    .insert({
+      tenant_id: tenant.id,
+      clerk_user_id: userId,
+      role: "tenant_admin",
+      status: "active",
+    });
+
+  if (accountError) throw new Error(`Failed to create tenant account: ${accountError.message}`);
+
+  return tenant.id;
+}
+
 export async function getTenantById(id: string): Promise<Tenant | null> {
   const db = createServiceClient();
   const { data } = await db.from("tenants").select("*").eq("id", id).single();

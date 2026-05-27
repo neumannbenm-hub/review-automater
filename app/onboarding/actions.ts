@@ -3,12 +3,12 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { createServiceClient } from "@/lib/supabase";
-import { getCurrentTenantId } from "@/lib/tenant";
+import { getCurrentTenantIdForUser } from "@/lib/tenant";
 
 async function requireAuthAndTenant() {
   const { userId } = await auth();
   if (!userId) redirect("/sign-in");
-  const tenantId = await getCurrentTenantId();
+  const tenantId = await getCurrentTenantIdForUser(userId);
   if (!tenantId) throw new Error("No tenant context");
   return { userId, tenantId };
 }

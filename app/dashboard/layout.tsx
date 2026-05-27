@@ -1,5 +1,8 @@
 import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
+import { auth, currentUser } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
+import { ensureTenantProvisioned } from "@/lib/tenant";
 
 const NAV = [
   { href: "/dashboard", label: "Overview", icon: "▦" },
@@ -10,7 +13,17 @@ const NAV = [
   { href: "/dashboard/settings", label: "Settings", icon: "⚙" },
 ];
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const { userId } = await auth();
+  if (!userId) redirect("/sign-in");
+
+  const user = await currentUser();
+  const displayName =
+    user?.emailAddresses?.[0]?.emailAddress ??
+    [user?.firstName, user?.lastName].filter(Boolean).join(" ") ??
+    "My Business";
+
+  await ensureTenantProvisioned(userId, displayName);
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar */}

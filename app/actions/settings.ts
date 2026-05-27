@@ -3,7 +3,7 @@
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { randomBytes } from "crypto";
 import { createServiceClient } from "@/lib/supabase";
-import { getCurrentTenantId } from "@/lib/tenant";
+import { getCurrentTenantIdForUser } from "@/lib/tenant";
 
 export type ReviewSiteEntry = {
   id: string;
@@ -53,7 +53,7 @@ export async function saveCustomVariablesAction(names: string[]): Promise<void> 
 export async function getReviewSitesAction(): Promise<ReviewSiteEntry[]> {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
-  const tenantId = await getCurrentTenantId();
+  const tenantId = await getCurrentTenantIdForUser(userId);
   if (!tenantId) return [];
   const db = createServiceClient();
   const { data } = await db
@@ -72,7 +72,7 @@ export async function upsertReviewSiteAction(data: {
 }): Promise<void> {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
-  const tenantId = await getCurrentTenantId();
+  const tenantId = await getCurrentTenantIdForUser(userId);
   if (!tenantId) throw new Error("No tenant context");
   const db = createServiceClient();
 
@@ -106,7 +106,7 @@ export async function upsertReviewSiteAction(data: {
 export async function deleteReviewSiteAction(id: string): Promise<void> {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
-  const tenantId = await getCurrentTenantId();
+  const tenantId = await getCurrentTenantIdForUser(userId);
   if (!tenantId) throw new Error("No tenant context");
   const db = createServiceClient();
   await db.from("review_sites").delete().eq("id", id).eq("tenant_id", tenantId);
